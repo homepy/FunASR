@@ -1,0 +1,162 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "FunASR WebSocket Server:8k",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/runtime/python/websocket/funasr_wss_server.py",
+            "args": [
+                "--host", "0.0.0.0",
+                "--port", "10095",
+                "--asr_model", "iic/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-pytorch",
+                "--asr_model_revision", "v2.0.4",
+                "--asr_model_online", "iic/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-online",
+                "--asr_model_online_revision", "v2.0.4",
+                "--vad_model", "iic/speech_fsmn_vad_zh-cn-8k-common",
+                "--vad_model_revision", "v2.0.4",
+                "--punc_model", "iic/punc_ct-transformer_zh-cn-common-vad_realtime-vocab272727",
+                "--punc_model_revision", "v2.0.4",
+                "--ngpu", "0",
+                "--device", "cpu",
+                "--ncpu", "4"
+            ],
+            "console": "integratedTerminal",
+            "python": "/opt/miniconda3/envs/py39/bin/python",
+            "justMyCode": false
+        },
+        {
+            "name": "FunASR WebSocket Server:16k",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/runtime/python/websocket/funasr_wss_server.py",
+            "args": [
+                "--host", "0.0.0.0",
+                "--port", "10095",
+                "--asr_model", "iic/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-pytorch",
+                "--asr_model_revision", "v2.0.4",
+                "--asr_model_online", "iic/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-online",
+                "--asr_model_online_revision", "v2.0.4",
+                "--vad_model", "iic/speech_fsmn_vad_zh-cn-16k-common-pytorch",
+                "--vad_model_revision", "v2.0.4",
+                "--punc_model", "iic/punc_ct-transformer_zh-cn-common-vad_realtime-vocab272727",
+                "--punc_model_revision", "v2.0.4",
+                "--ngpu", "0",
+                "--device", "cpu",
+                "--ncpu", "4"
+            ],
+            "console": "integratedTerminal",
+            "python": "/opt/miniconda3/envs/py39/bin/python",
+            "justMyCode": false
+        },
+        {
+            "name": "FunASR WebSocket Client-File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/runtime/python/websocket/funasr_wss_client.py",
+            "args": [
+                "--host", "localhost",
+                "--port", "10095",
+                "--audio_in", "${workspaceFolder}/runtime/funasr_api/asr_example.wav",
+                "--audio_fs", "8000",
+                "--chunk_size", "5, 10, 5",
+                "--chunk_interval", "10",
+                "--mode", "online",
+                "--ssl", "0",
+                "--use_itn", "1"
+            ],
+            "console": "integratedTerminal",
+            "python": "/opt/miniconda3/envs/py39/bin/python",
+            "justMyCode": false
+        },
+        {
+            "name": "FunASR WebSocket Client-Mic",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/runtime/python/websocket/funasr_wss_client.py",
+            "args": [
+                "--host", "localhost",
+                "--port", "10095",
+                "--chunk_size", "5, 10, 5",
+                "--chunk_interval", "10",
+                "--mode", "2pass",
+                "--ssl", "0",
+                "--use_itn", "1"
+            ],
+            "console": "integratedTerminal",
+            "python": "/opt/miniconda3/envs/py39/bin/python",
+            "justMyCode": false
+        },
+        {
+            "name": "funasr-wss-server-2pass:16k",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/runtime/websocket/build/bin/funasr-wss-server-2pass",
+            "args": [
+                "--download-model-dir", "${workspaceFolder}/models",
+                "--model-dir", "damo/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-onnx",
+                "--offline-model-revision", "v2.0.5",
+                "--online-model-dir", "damo/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-online-onnx",
+                "--online-model-revision", "v2.0.5",
+                "--vad-dir", "damo/speech_fsmn_vad_zh-cn-16k-common-onnx",
+                "--vad-revision", "v2.0.4",
+                "--punc-dir", "damo/punc_ct-transformer_zh-cn-common-vad_realtime-vocab272727-onnx",
+                "--punc-revision", "v2.0.5",
+                "--itn-dir", "thuduj12/fst_itn_zh",
+                "--itn-revision", "v1.0.1",
+                "--lm-dir", "damo/speech_ngram_lm_zh-cn-ai-wesp-fst",
+                "--lm-revision", "v1.0.2",
+                "--hotword", "",
+                "--listen-ip", "0.0.0.0",
+                "--port", "10095",
+                "--io-thread-num", "2",
+                "--decoder-thread-num", "8",
+                "--model-thread-num", "2",
+                "--quantize", "true"
+            ],
+            "cwd": "${workspaceFolder}/runtime/websocket/bin",
+            "MIMode": "lldb",
+            "environment": [
+                {
+                    "name": "PATH",
+                    "value": "/opt/miniconda3/envs/py39/bin:${env:PATH}"
+                }
+            ]
+        },
+        {
+            "name": "vtcc-funasr-wss-server-2pass (8k Telephone Online)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/runtime/websocket/build/bin/vtcc-funasr-wss-server-2pass",
+            "args": [
+                "--download-model-dir", "${workspaceFolder}/models",
+                "--model-dir", "damo/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-onnx",
+                "--online-model-dir", "iic/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-online-onnx",
+                "--online-model-revision", "v2.0.5",
+                "--vad-dir", "iic/speech_fsmn_vad_zh-cn-8k-common-onnx",
+                "--vad-revision", "v2.0.4",
+                "--punc-dir", "",
+                "--itn-dir", "",
+                "--lm-dir", "",
+                "--hotword", "",
+                "--listen-ip", "0.0.0.0",
+                "--port", "10096",
+                "--io-thread-num", "2",
+                "--decoder-thread-num", "4",
+                "--model-thread-num", "1",
+                "--quantize", "false"
+            ],
+            "cwd": "${workspaceFolder}/runtime/websocket/bin",
+            "MIMode": "lldb",
+            "environment": [
+                {
+                    "name": "PATH",
+                    "value": "/opt/miniconda3/envs/py39/bin:${env:PATH}"
+                }
+            ]
+        }
+    ]
+}
