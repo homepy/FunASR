@@ -4,6 +4,7 @@
     // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+    
 
         {
             "name": "FunASR WebSocket Server:16k",
@@ -81,7 +82,7 @@
             "args": [
                 "--host", "localhost",
                 "--port", "10095",
-                "--audio_in", "${workspaceFolder}/audio/16k16bit.pcm",
+                "--audio_in", "${workspaceFolder}/audio/asr_example.wav",
                 "--audio_fs", "16000",
                 "--chunk_size", "5, 10, 5",
                 "--chunk_interval", "10",
@@ -136,15 +137,82 @@
             "program": "${workspaceFolder}/runtime/websocket/build/bin/funasr-wss-server",
             "args": [
                 "--download-model-dir", "${workspaceFolder}/models",
-                "--model-dir", "iic/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-onnx",
+                "--model-dir", "iic/speech_paraformer-large-vad-punc_asr_nat-zh-cn-16k-common-vocab8404-onnx",
+                "--model-revision", "v2.0.5",
                 "--vad-dir", "iic/speech_fsmn_vad_zh-cn-16k-common-onnx",
                 "--vad-revision", "v2.0.4",
-                "--punc-dir", "iic/punc_ct-transformer_zh-cn-common-vad_realtime-vocab272727-onnx",
+                "--punc-dir", "iic/punc_ct-transformer_cn-en-common-vocab471067-large-onnx",
                 "--punc-revision", "v2.0.5",
                 "--itn-dir", "thuduj12/fst_itn_zh",
                 "--itn-revision", "v1.0.1",
                 "--lm-dir", "iic/speech_ngram_lm_zh-cn-ai-wesp-fst",
                 "--lm-revision", "v1.0.2",
+                "--hotword", "",
+                "--listen-ip", "0.0.0.0",
+                "--port", "10095",
+                "--io-thread-num", "2",
+                "--decoder-thread-num", "4",
+                "--model-thread-num", "2",
+                "--quantize", "true"
+            ],
+            "cwd": "${workspaceFolder}/runtime/websocket/bin",
+            "MIMode": "lldb",
+            "environment": [
+                {
+                    "name": "PATH",
+                    "value": "/opt/miniconda3/envs/py39/bin:${env:PATH}"
+                }
+            ]
+        },        {
+            "name": "funasr-wss-server:sv",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/runtime/websocket/build/bin/funasr-wss-server",
+            "args": [
+                "--download-model-dir", "${workspaceFolder}/models",
+                "--model-dir", "iic/SenseVoiceSmall-onnx",
+                "--vad-dir", "iic/speech_fsmn_vad_zh-cn-16k-common-onnx",
+                "--vad-revision", "v2.0.4",
+                "--punc-dir", "iic/punc_ct-transformer_cn-en-common-vocab471067-large-onnx",
+                "--punc-revision", "v2.0.5",
+                "--itn-dir", "thuduj12/fst_itn_zh",
+                "--itn-revision", "v1.0.1",
+                "--lm-dir", "iic/speech_ngram_lm_zh-cn-ai-wesp-fst",
+                "--lm-revision", "v1.0.2",
+                "--hotword", "",
+                "--listen-ip", "0.0.0.0",
+                "--port", "10095",
+                "--io-thread-num", "2",
+                "--decoder-thread-num", "4",
+                "--model-thread-num", "2",
+                "--quantize", "true"
+            ],
+            "cwd": "${workspaceFolder}/runtime/websocket/bin",
+            "MIMode": "lldb",
+            "environment": [
+                {
+                    "name": "PATH",
+                    "value": "/opt/miniconda3/envs/py39/bin:${env:PATH}"
+                }
+            ]
+        },
+                {
+            "name": "vtcc-funasr-wss-server",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/runtime/websocket/build/bin/vtcc-funasr-wss-server",
+            "args": [
+                "--download-model-dir", "${workspaceFolder}/models",
+                "--model-dir", "iic/SenseVoiceSmall-onnx",
+                "--model-revision", "v2.0.5",
+                "--vad-dir", "iic/speech_fsmn_vad_zh-cn-16k-common-onnx",
+                "--vad-revision", "v2.0.4",
+                "--punc-dir", "",
+                "--punc-revision", "",
+                "--itn-dir", "",
+                "--itn-revision", "",
+                "--lm-dir", "",
+                "--lm-revision", "",
                 "--hotword", "",
                 "--listen-ip", "0.0.0.0",
                 "--port", "10095",
@@ -170,12 +238,12 @@
             "args": [
                 "--server-ip", "127.0.0.1",
                 "--port", "10095",
-                "--wav-path", "${workspaceFolder}/audio/asr_example.wav",
+                "--wav-path", "${workspaceFolder}/audio/16k16bit.pcm",
                 "--audio-fs", "16000",
                 "--thread-num", "1",
                 "--is-ssl", "0",
-                "--use-itn", "1",
-                "--svs-itn", "1"
+                "--use-itn", "0",
+                "--svs-itn", "0"
             ],
             "cwd": "${workspaceFolder}/runtime/websocket/bin",
             "MIMode": "lldb"
@@ -192,8 +260,8 @@
                 "--audio-fs", "8000",
                 "--thread-num", "1",
                 "--is-ssl", "0",
-                "--use-itn", "1",
-                "--svs-itn", "1"
+                "--use-itn", "0",
+                "--svs-itn", "0"
             ],
             "cwd": "${workspaceFolder}/runtime/websocket/bin",
             "MIMode": "lldb"

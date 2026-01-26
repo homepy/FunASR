@@ -5,7 +5,8 @@
       "name": "macos-base",
       "hidden": true,
       "generator": "Unix Makefiles",
-      "binaryDir": "${sourceDir}/build/${presetName}",
+      "binaryDir": "${sourceDir}/build",
+      "installDir": "${sourceDir}/install",
       "cacheVariables": {
         "ONNXRUNTIME_DIR": "/usr/local/opt/onnxruntime",
         "FFMPEG_DIR": "/usr/local/opt/ffmpeg",

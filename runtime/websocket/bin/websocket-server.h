@@ -61,6 +61,7 @@ typedef struct {
   std::shared_ptr<std::vector<std::vector<float>>> hotwords_embedding=nullptr;
   std::shared_ptr<websocketpp::lib::mutex> thread_lock; // lock for each connection
   FUNASR_DEC_HANDLE decoder_handle=nullptr;
+  int frame_count = 0;  // counter for received audio frames
 } FUNASR_MESSAGE;
 
 // See https://wiki.mozilla.org/Security/Server_Side_TLS for more details about

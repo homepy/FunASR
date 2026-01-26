@@ -13,6 +13,7 @@ endif()
 
 add_executable(funasr-wss-server "funasr-wss-server.cpp" "websocket-server.cpp" ${RELATION_SOURCE})
 add_executable(funasr-wss-server-2pass "funasr-wss-server-2pass.cpp" "websocket-server-2pass.cpp" ${RELATION_SOURCE})
+add_executable(vtcc-funasr-wss-server "vtcc-funasr-wss-server.cpp" "vtcc-websocket-server.cpp" ${RELATION_SOURCE})
 add_executable(funasr-wss-client "funasr-wss-client.cpp" ${RELATION_SOURCE})
 add_executable(funasr-wss-client-2pass "funasr-wss-client-2pass.cpp" "microphone.cpp" ${RELATION_SOURCE})
 
@@ -21,12 +22,14 @@ if(UNIX AND NOT APPLE)
   # 只有 Linux 系统才添加 --no-as-needed
   target_link_options(funasr-wss-server PRIVATE "-Wl,--no-as-needed")
   target_link_options(funasr-wss-server-2pass PRIVATE "-Wl,--no-as-needed")
+  target_link_options(vtcc-funasr-wss-server PRIVATE "-Wl,--no-as-needed")
 endif()
 
 target_link_libraries(funasr-wss-client PUBLIC funasr ${OPENSSL_CRYPTO_LIBRARY} ${OPENSSL_SSL_LIBRARY})
 target_link_libraries(funasr-wss-client-2pass PUBLIC funasr ${OPENSSL_CRYPTO_LIBRARY} ${OPENSSL_SSL_LIBRARY} portaudio)
 target_link_libraries(funasr-wss-server PUBLIC funasr ${OPENSSL_CRYPTO_LIBRARY} ${OPENSSL_SSL_LIBRARY})
 target_link_libraries(funasr-wss-server-2pass PUBLIC funasr ${OPENSSL_CRYPTO_LIBRARY} ${OPENSSL_SSL_LIBRARY})
+target_link_libraries(vtcc-funasr-wss-server PUBLIC funasr ${OPENSSL_CRYPTO_LIBRARY} ${OPENSSL_SSL_LIBRARY})
 
 # Install rules for Linux and macOS
 if(UNIX)
@@ -35,6 +38,7 @@ if(UNIX)
   # Install executable targets
   install(TARGETS funasr-wss-server
           funasr-wss-server-2pass
+          vtcc-funasr-wss-server
           funasr-wss-client
           funasr-wss-client-2pass
           RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
