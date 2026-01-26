@@ -72,14 +72,21 @@ void WebSocketServer::do_decoder(const std::vector<char>& buffer,
                                  bool sys_itn) {
   try {
     int num_samples = buffer.size();  // the size of the buf
+    std::string ucid = msg.value("ucid", "");
 
     if (!buffer.empty() && hotwords_embedding.size() > 0) {
       std::string asr_result="";
       std::string stamp_res="";
       std::string stamp_sents="";
+
+      // start timing
+      auto start_time = std::chrono::high_resolution_clock::now();
+
       try{
+        // Reset decoder state before inference to prevent result accumulation
+        FunOfflineReset(asr_handle, decoder_handle);
         FUNASR_RESULT Result = FunOfflineInferBuffer(
-            asr_handle, buffer.data(), buffer.size(), RASR_NONE, nullptr, 
+            asr_handle, buffer.data(), buffer.size(), RASR_NONE, nullptr,
             hotwords_embedding, audio_fs, wav_format, itn, decoder_handle,
             svs_lang, sys_itn);
         if (Result != nullptr){
@@ -94,6 +101,10 @@ void WebSocketServer::do_decoder(const std::vector<char>& buffer,
       }catch (std::exception const& e) {
         LOG(ERROR) << e.what();
       }
+
+      // end timing and calculate duration in milliseconds
+      auto end_time = std::chrono::high_resolution_clock::now();
+      auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
 
       websocketpp::lib::error_code ec;
       nlohmann::json jsonresult;        // result json
@@ -114,6 +125,9 @@ void WebSocketServer::do_decoder(const std::vector<char>& buffer,
         }
       }
       jsonresult["wav_name"] = wav_name;
+      if (!ucid.empty()) {
+        jsonresult["ucid"] = ucid;
+      }
 
       // send the json to client
       if (is_ssl) {
@@ -124,7 +138,9 @@ void WebSocketServer::do_decoder(const std::vector<char>& buffer,
                       ec);
       }
 
-      LOG(INFO) << "buffer.size=" << buffer.size() << ",result json=" << jsonresult.dump();
+      LOG(INFO) << "ucid=" << ucid << ", buffer.size=" << buffer.size()
+                << ", asr_duration_ms=" << duration
+                << ", result json=" << jsonresult.dump();
     }else{
       LOG(INFO) << "Sent empty msg";
       websocketpp::lib::error_code ec;
