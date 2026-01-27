@@ -12,9 +12,33 @@
 
 #include "websocket-server.h"
 
+#include <openssl/rand.h>
+#include <cstdio>
 #include <thread>
 #include <utility>
 #include <vector>
+
+// Generate UUID4 string using OpenSSL
+static std::string generate_uuid4() {
+  unsigned char uuid[16];
+  if (RAND_bytes(uuid, 16) != 1) {
+    // Fallback to simple pattern if RAND_bytes fails
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx";
+  }
+
+  // Set version bits (4 for UUIDv4)
+  uuid[6] = (uuid[6] & 0x0F) | 0x40;
+  // Set variant bits (10xx for RFC 4122)
+  uuid[8] = (uuid[8] & 0x3F) | 0x80;
+
+  // Format as xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
+  char str[37];
+  snprintf(str, sizeof(str),
+      "%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+      uuid[0], uuid[1], uuid[2], uuid[3], uuid[4], uuid[5], uuid[6], uuid[7],
+      uuid[8], uuid[9], uuid[10], uuid[11], uuid[12], uuid[13], uuid[14], uuid[15]);
+  return std::string(str);
+}
 
 extern std::unordered_map<std::string, int> hws_map_;
 extern int fst_inc_wts_;
@@ -108,7 +132,11 @@ void WebSocketServer::do_decoder(const std::vector<char>& buffer,
 
       websocketpp::lib::error_code ec;
       nlohmann::json jsonresult;        // result json
-      jsonresult["text"] = asr_result;  // put result in 'text'
+      jsonresult["text"] = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><result><interpretation grammar=\"builtin:grammar/boolean\" confidence=\"0.97\"><instance><nlresult>" +
+                           std::string(msg["connection_id"]) +
+                           "</nlresult></instance><input mode=\"speech\">" +
+                           asr_result +
+                           "</input></interpretation></result>";  // put result in 'text'
       jsonresult["mode"] = "offline";
 	    jsonresult["is_final"] = false;
       if(stamp_res != ""){
@@ -184,6 +212,7 @@ void WebSocketServer::on_open(websocketpp::connection_hdl hdl) {
   data_msg->msg["is_eof"]=false;
   data_msg->msg["svs_lang"]="auto";
   data_msg->msg["svs_itn"]=true;
+  data_msg->msg["connection_id"]=generate_uuid4();
   data_msg->frame_count = 0;  // initialize frame counter
   FUNASR_DEC_HANDLE decoder_handle =
     FunASRWfstDecoderInit(asr_handle, ASR_OFFLINE, global_beam_, lattice_beam_, am_scale_);
