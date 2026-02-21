@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 project(FunASRWebscoket) 
 
-set(CMAKE_CXX_STANDARD 14 CACHE STRING "The C++ version to be used.")
+set(CMAKE_CXX_STANDARD 17 CACHE STRING "The C++ version to be used.")
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
@@ -26,12 +26,14 @@ endif()
 
 if(GPU)
     add_definitions(-DUSE_GPU)
-    set(TORCH_DIR "/usr/local/lib/python3.8/dist-packages/torch")
-    set(TORCH_BLADE_DIR "/usr/local/lib/python3.8/dist-packages/torch_blade")
+    #set(TORCH_DIR "/usr/local/lib/python3.8/dist-packages/torch")
+    #set(TORCH_DIR "/root/.conda/envs/py39/lib/python3.9/site-packages/torch")
+    set(TORCH_DIR "/root/.conda/envs/py311/lib/python3.11/site-packages/torch")
+    #set(TORCH_BLADE_DIR "/usr/local/lib/python3.8/dist-packages/torch_blade")
     include_directories(${TORCH_DIR}/include)
     include_directories(${TORCH_DIR}/include/torch/csrc/api/include)
     link_directories(${TORCH_DIR}/lib)
-    link_directories(${TORCH_BLADE_DIR})
+    #link_directories(${TORCH_BLADE_DIR})
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -D_GLIBCXX_USE_CXX11_ABI=0")
 endif()
  

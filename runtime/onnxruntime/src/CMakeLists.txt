@@ -39,7 +39,8 @@ else()
 endif()
 
 if(GPU)
-    set(TORCH_DEPS torch torch_cuda torch_cpu c10 c10_cuda torch_blade ral_base_context)
+    #set(TORCH_DEPS torch torch_cuda torch_cpu c10 c10_cuda torch_blade ral_base_context)
+    set(TORCH_DEPS torch torch_cuda torch_cpu c10 c10_cuda)
 endif()
 
 #message("CXX_FLAGS "${CMAKE_CXX_FLAGS})
