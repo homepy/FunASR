@@ -10,7 +10,7 @@ from funasr_onnx.utils.postprocess_utils import rich_transcription_postprocess
 
 model_dir = "iic/SenseVoiceSmall"
 
-model = SenseVoiceSmall(model_dir, batch_size=10, quantize=False)
+model = SenseVoiceSmall(model_dir, batch_size=1, quantize=False, device_id=0)
 
 # inference
 wav_or_scp = ["{}/.cache/modelscope/hub/{}/example/en.mp3".format(Path.home(), model_dir)]
