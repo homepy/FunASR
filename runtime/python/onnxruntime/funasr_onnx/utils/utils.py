@@ -8,7 +8,6 @@ from typing import Any, Dict, Iterable, List, NamedTuple, Set, Tuple, Union
 import re
 import numpy as np
 import yaml
-
 try:
     from onnxruntime import (
         GraphOptimizationLevel,
@@ -204,20 +203,57 @@ class OrtInferSession:
             "arena_extend_strategy": "kSameAsRequested",
         }
 
+        rocm_ep = "ROCMExecutionProvider" 
+        rocm_provider_options = {
+            "device_id": int(device_id),
+            #"arena_extend_strategy": "kNextPowerOfTwo",
+            #"do_copy_in_default_stream": "true",
+        }
+        migraphx_ep = "MIGraphXExecutionProvider"
+        migraphx_provider_options = {
+            "device_id": int(device_id),
+            #
+        }
+
+        print("onnxruntime.__file__ = ", onnxruntime.__file__)
         EP_list = []
-        if device_id != "-1" and get_device() == "GPU" and cuda_ep in get_available_providers():
-            EP_list = [(cuda_ep, cuda_provider_options)]
+        providers = onnxruntime.get_available_providers()
+        print("onnxruntime.get_available_providers() = ", providers)
+
+        # "GPU-MIGRAPHX"是海光的get_device() 返回值
+        if device_id != "-1" and (get_device() == "GPU" or get_device() == "GPU-MIGRAPHX"):
+            print("GPU")
+            if cuda_ep in providers:
+                EP_list = [(cuda_ep, cuda_provider_options)]
+            elif migraphx_ep in providers:
+                EP_list = [(migraphx_ep, migraphx_provider_options)]
+                print("adding MIGraphXExecutionProvider")
+            #elif rocm_ep in providers:
+                #EP_list = [(rocm_ep, rocm_provider_options)]
+                #print("adding ROCMExecutionProvider")
+        else:
+            print("not GPU")
+
         EP_list.append((cpu_ep, cpu_provider_options))
+        print("EP_list = ", EP_list)
 
         self._verify_model(model_file)
         self.session = InferenceSession(model_file, sess_options=sess_opt, providers=EP_list)
 
-        if device_id != "-1" and cuda_ep not in self.session.get_providers():
+        gpu_eps = [cuda_ep, migraphx_ep, rocm_ep]
+        if device_id != "-1" and not any(ep in self.session.get_providers() for ep in gpu_eps):
+            """
             warnings.warn(
                 f"{cuda_ep} is not avaiable for current env, the inference part is automatically shifted to be executed under {cpu_ep}.\n"
                 "Please ensure the installed onnxruntime-gpu version matches your cuda and cudnn version, "
                 "you can check their relations from the offical web site: "
                 "https://onnxruntime.ai/docs/execution-providers/CUDA-ExecutionProvider.html",
+                RuntimeWarning,
+            )
+            """
+            warnings.warn(
+                f"No GPU ExecutionProvider available (tried CUDA/MIGraphX/ROCm), falling back to {cpu_ep}.\n"
+                "Please install onnxruntime-gpu, onnxruntime-migraphx, or onnxruntime-rocm accordingly.",
                 RuntimeWarning,
             )
 
